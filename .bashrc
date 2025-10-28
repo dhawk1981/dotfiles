@@ -131,4 +131,4 @@ resetdock(){
 complete -F _complete_alias dotfiles
 source /usr/share/bash-completion/completions/git
 __git_complete dotfiles __git_main
-fastfetch
+#fastfetch

@@ -1,0 +1,45 @@
+{
+	"name": "main",
+	"layer": "top",
+	"height": 30,
+	"exclusive": true,
+	"position": "top",
+	"spacing": 5,
+	"fixed-center": true,
+	//"margin-top": 4,
+	"margin-left": 8,
+	"margin-right": 8,
+	"reload_style_on_change": true,
+	"modules-left": [
+		"custom/logo",
+		"hyprland/workspaces"
+	],
+	"modules-center": [
+		"hyprland/window"
+	],
+	"modules-right": [
+		//"network",
+		"keyboard-state",
+		"battery",
+		"cpu",
+		"memory",
+		"temperature",
+		"pulseaudio",
+		"tray",
+		"clock",
+		"custom/power-menu"
+	],
+	"include": [
+		"modules/logo.jsonc",
+		"modules/power-menu.jsonc",
+		"modules/tray.jsonc",
+		"modules/cpu.jsonc",
+		"modules/memory.jsonc",
+		"modules/pulseaudio.jsonc",
+		"modules/battery.jsonc",
+		"modules/clock.jsonc",
+		"modules/keyboard-state.jsonc",
+		"modules/hyprland-workspaces.jsonc",
+		"modules/hyprland-window.jsonc"
+	]
+}

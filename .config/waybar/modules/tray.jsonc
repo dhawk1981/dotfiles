@@ -1,0 +1,11 @@
+{
+	"tray": {
+		//"icon-size": 21,
+		"spacing": 4,
+		"icons": {
+			"blueman": "bluetooth-symbolic",
+			"nm-applet": "network-wired-activated-symbolic"
+			//   "TelegramDesktop": "$HOME/.local/share/icons/hicolor/16x16/apps/telegram.png"
+		}
+	}
+}
