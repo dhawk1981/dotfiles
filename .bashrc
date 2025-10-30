@@ -63,10 +63,6 @@ fi
 unset rc
 
 ####################################################################################
-##	Prompt (with faster git branch if available)
-####################################################################################
-# PS1="\[\033[36m\]\u\[\033[m\]@\[\033[32m\]\h:\[\033[33;1m\]\w\[\033[m\]\$ "
-####################################################################################
 ##  Prompt – clean base + FAST, SAFE git branch
 ####################################################################################
 PS1='\[\033[36m\]\u\[\033[m\]@\[\033[32m\]\h:\[\033[33;1m\]\w\[\033[35m\]$( \
@@ -92,7 +88,7 @@ alias vifm='vifm -f .'
 alias update='sudo pacman -Syu'
 alias killall='killall -s SIGKILL'
 alias cat='bat --paging=never'
-alias cl='clear'
+alias cls='clear'
 alias printenv='clear && printenv | sort | less'
 alias vim="nvim" 
 alias vi="nvim"
@@ -166,7 +162,7 @@ resetdock(){
 }
 
 # cd into dir and list contents
-cls() { cd "$@" && ll; }
+cdls() { cd "$@" && ll; }
 
 # Make cd ->
 mkcd() { mkdir -p "$1" && cd "$1"; }
