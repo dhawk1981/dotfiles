@@ -8,29 +8,42 @@
 ####################################################################################
 
 ####################################################################################
+## 	Bash Options	
+####################################################################################
+
+shopt -s cdspell          # autocorrect cd typos
+shopt -s dirspell         # autocorrect dir names in completion
+shopt -s autocd           # just type dir name to cd
+shopt -s globstar         # ** matches all files and dirs recursively
+shopt -s checkwinsize     # update LINES/COLUMNS after each command
+shopt -s histappend       # append history
+bind "set completion-ignore-case on"
+
+####################################################################################
 ##	Exports
 ####################################################################################
-export HISTCONTROL=ignoreboth:erasedups
+
 export EDITOR=vim
-HISTSIZE=2000
-HISTFILESIZE=2000
+export HISTSIZE=-1
+export HISTFILESIZE=-1
+export HISTCONTROL=ignoredups:ignorespace:erasedups
+PROMPT_COMMAND='history -a; history -c; history -r'
 
 ####################################################################################
 ##	Globals
 ####################################################################################
+
 if [ -f /etc/bashrc ]; then
 	. /etc/bashrc
 fi
 
-#export PAGER="nvim +Man!."
-#export MANPAGER="nvim +Man!."
-#export PAGER="bat"
-#export MANPAGER="bat"
+# Your exact working MANPAGER — preserved and respected
 export MANPAGER="sh -c 'sed -u -e \"s/\\x1B\[[0-9;]*m//g; s/.\\x08//g\" | bat -p -lman'"
-#man 2 select
+
 ####################################################################################
 ##	Path
 ####################################################################################
+
 if ! [[ "$PATH" =~ "$HOME/.bin:$HOME/bin:$HOME/.local/bin" ]]; then
 	PATH="$HOME/.bin:$HOME/bin:$HOME/.local/bin:$PATH"
 fi
@@ -39,6 +52,7 @@ export PATH
 ####################################################################################
 ##	Import Sources
 ####################################################################################
+
 if [ -d ~/.bashrc.d ]; then
 	for rc in ~/.bashrc.d/*; do
 		if [ -f "$rc" ]; then
@@ -49,18 +63,22 @@ fi
 unset rc
 
 ####################################################################################
-##	Prompt
+##	Prompt (with faster git branch if available)
 ####################################################################################
-PS1="\[\033[36m\]\u\[\033[m\]@\[\033[32m\]\h:\[\033[33;1m\]\w\[\033[m\]\$ "
-
+# PS1="\[\033[36m\]\u\[\033[m\]@\[\033[32m\]\h:\[\033[33;1m\]\w\[\033[m\]\$ "
 ####################################################################################
-##	Options
+##  Prompt – clean base + FAST, SAFE git branch
 ####################################################################################
-bind "set completion-ignore-case on"
-
+PS1='\[\033[36m\]\u\[\033[m\]@\[\033[32m\]\h:\[\033[33;1m\]\w\[\033[35m\]$( \
+    git rev-parse --is-inside-work-tree >/dev/null 2>&1 && \
+    ( git symbolic-ref --quiet --short HEAD 2>/dev/null || \
+      git rev-parse --short HEAD 2>/dev/null ) | \
+    sed "s/^/ (/; s/$/)/" \
+)\[\033[m\]\$ '
 ####################################################################################
 ##	Alias
 ####################################################################################
+
 alias ls='ls --color=auto'
 alias la='ls -a'
 alias ll='ls -alFh'
@@ -76,42 +94,64 @@ alias killall='killall -s SIGKILL'
 alias cat='bat --paging=never'
 alias cl='clear'
 alias printenv='clear && printenv | sort | less'
-alias hyprcfg="nvim ~/.config/hypr/hyprland.conf"
-alias vim="nvim"
+alias vim="nvim" 
 alias vi="nvim"
 alias v="nvim"
-# Alias for downloading a single YouTube video with best quality, concurrent fragments, and 4 threads
-alias yt-dlp-video='yt-dlp -f best --concurrent-fragments 4'
+alias reboot='sudo reboot'
+alias poweroff='sudo poweroff'
+alias systemctl='sudo systemctl'
 
-# Alias for downloading a YouTube playlist with best quality, concurrent fragments, and 4 threads
-alias yt-dlp-playlist='yt-dlp -f best --concurrent-fragments 4'
+# cd shortcuts
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
 
-# Alias for downloading an entire YouTube channel with best quality, concurrent fragments, and 4 threads
-alias yt-dlp-channel='yt-dlp -f best --concurrent-fragments 4'
+# Safer rm with trash-cli (optional — uncomment if installed)
+# command -v trash-put >/dev/null && {
+#     alias rm='trash-put'
+#     alias rl='trash-list'
+#     alias rr='trash-restore'
+#     alias re='trash-empty'
+#     alias rmd='command rm -d'
+#     alias rmf='command rm -f'
+#     alias rmr='command rm -r'
+# }
 
 ####################################################################################
-##	Dot Files Git
+## Ctrl+R: fuzzy history search Ctrl+T: fuzzy file search
 ####################################################################################
-#alias dotfiles='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
+
+[ -f /usr/share/fzf/key-bindings.bash ] && source /usr/share/fzf/key-bindings.bash
+[ -f /usr/share/fzf/completion.bash ] && source /usr/share/fzf/completion.bash
+
+####################################################################################
+##	GIT Setup for tracking dotfiles
+####################################################################################
+
 alias dotfiles='/usr/bin/git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME"'
+complete -F _complete_alias dotfiles
+source /usr/share/bash-completion/completions/git 2>/dev/null || true
+__git_complete dotfiles __git_main 2>/dev/null || true
+
 ####################################################################################
 ##	Functions
 ####################################################################################
 
 extract() {
-	if [ -f $1 ]; then
-		case $1 in
-		*.tar.bz2) tar xvjf $1 ;;
-		*.tar.gz) tar xvzf $1 ;;
-		*.bz2) bunzip2 $1 ;;
-		*.rar) unrar x $1 ;;
-		*.gz) gunzip $1 ;;
-		*.tar) tar xvf $1 ;;
-		*.tbz2) tar xvjf $1 ;;
-		*.tgz) tar xvzf $1 ;;
-		*.zip) unzip $1 ;;
-		*.Z) uncompress $1 ;;
-		*.7z) 7z x $1 ;;
+	if [ -f "$1" ]; then
+		case "$1" in
+		*.tar.bz2) tar xvjf "$1" ;;
+		*.tar.gz) tar xvzf "$1" ;;
+		*.bz2) bunzip2 "$1" ;;
+		*.rar) unrar x "$1" ;;
+		*.gz) gunzip "$1" ;;
+		*.tar) tar xvf "$1" ;;
+		*.tbz2) tar xvjf "$1" ;;
+		*.tgz) tar xvzf "$1" ;;
+		*.zip) unzip "$1" ;;
+		*.Z) uncompress "$1" ;;
+		*.7z) 7z x "$1" ;;
 		*) echo "don't know how to extract '$1'..." ;;
 		esac
 	else
@@ -119,16 +159,50 @@ extract() {
 	fi
 }
 
+# Reset docking station
 resetdock(){
-	#	Function to reset docking station because it periodicly
-	#	freezes one monitor after sitting a while
 	echo "Resetting T6 Usb Docking Staion"
 	sudo usbreset "USB Station"
 }
+
+# cd into dir and list contents
+cls() { cd "$@" && ll; }
+
+# Make cd ->
+mkcd() { mkdir -p "$1" && cd "$1"; }
+
+# Weather
+weather() { curl -s "wttr.in/${1:-}?m" | head -n 38; }
+
+# Repeat last command with sudo
+please() { sudo "$(fc -ln -1 | head -n1)"; }
+
+# Pretty path
+path() { echo "$PATH" | tr ':' '\n' | nl; }
+
+#Reload bashrc.d
+relod() {
+    for rc in ~/.bashrc.d; do
+        source "$rc"
+    done
+    echo "bashrc.d reloaded."
+}
+
 ####################################################################################
-##	Usless
+## 	Youtube-DLP	
 ####################################################################################
-complete -F _complete_alias dotfiles
-source /usr/share/bash-completion/completions/git
-__git_complete dotfiles __git_main
-#fastfetch
+
+yt-dlp-best() {
+  yt-dlp -f 'bestvideo+bestaudio/best' --concurrent-fragments "${1:-4}" "${@:2}"
+}
+alias yt-dlp-video='yt-dlp-best 4'
+alias yt-dlp-playlist='yt-dlp-best 8 -i'
+alias yt-dlp-channel='yt-dlp-best 8 -i --yes-playlist'
+
+####################################################################################
+## 	Sudo completion for common commands
+####################################################################################
+
+for cmd in pacman systemctl reboot poweroff; do
+    complete -F _command "sudo $cmd" 2>/dev/null || true
+done
