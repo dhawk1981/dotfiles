@@ -87,7 +87,7 @@ alias df='df -h'
 alias grep='grep --color=auto'
 alias vifm='vifm -f .'
 alias update='sudo pacman -Syu'
-alias killall='killall -s SIGKILL'
+alias die='killall -s SIGKILL'
 alias cat='bat --paging=never'
 alias cls='clear'
 alias printenv='clear && printenv | sort | less'
@@ -197,18 +197,30 @@ alias yt-dlp-playlist='yt-dlp-best 8 -i'
 alias yt-dlp-channel='yt-dlp-best 8 -i --yes-playlist'
 
 ####################################################################################
-## 	Sudo completion for common commands
+## 	Fix completions for aliases
 ####################################################################################
 
-# Load systemctl completion
-[[ $(type -t _systemctl) == function ]] || source /usr/share/bash-completion/completions/systemctl 2>/dev/null
+_fix_alias_completion() {
+    local alias_name="$1"
+    local real_cmd="$2"
 
-# Fix all alias completions
-complete -F _pacman    pacman
-complete -F _systemctl sctl
-complete -F _command   reboot
-complete -F _command   poweroff
-complete -F _pacman    "sudo pacman"
-complete -F _systemctl "sudo sctl"
-complete -F _command   "sudo reboot"
-complete -F _command   "sudo poweroff"
+    # 1. Ensure the real command exists
+    command -v "$real_cmd" >/dev/null || return
+
+    # 2. Load completion file if function missing
+    local func_name="_$real_cmd"
+    [[ $(type -t "$func_name") == function ]] || \
+        source "/usr/share/bash-completion/completions/$real_cmd" 2>/dev/null
+
+    # 3. Attach to alias
+    complete -F "$func_name" "$alias_name" 2>/dev/null
+}
+
+# Apply to all your aliases
+_fix_alias_completion sctl     systemctl
+_fix_alias_completion die      killall
+_fix_alias_completion pacman  pacman
+_fix_alias_completion update  pacman
+
+# Fix completion for die alias
+complete -F _comp_cmd_killall die
