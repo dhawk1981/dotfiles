@@ -98,11 +98,7 @@ alias v="nvim"
 alias reboot='sudo reboot'
 alias poweroff='sudo poweroff'
 alias sctl='sudo systemctl'
-# Load systemctl completions if not already loaded
-[[ $(type -t _systemctl) == function ]] || source /usr/share/bash-completion/completions/systemctl 2>/dev/null
 
-# Attach to sctl (and any other sudo aliases)
-complete -F _systemctl sctl
 # cd shortcuts 
 alias ..='cd ..'
 alias ...='cd ../..'
@@ -128,7 +124,7 @@ alias .....='cd ../../../..'
 [ -f /usr/share/fzf/completion.bash ] && source /usr/share/fzf/completion.bash
 
 ####################################################################################
-##	GIT Setup for tracking dotfiles
+##	GIT Setup for tracking dotfiles with bash completions
 ####################################################################################
 
 alias dotfiles='/usr/bin/git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME"'
@@ -137,7 +133,7 @@ source /usr/share/bash-completion/completions/git 2>/dev/null || true
 __git_complete dotfiles __git_main 2>/dev/null || true
 
 ####################################################################################
-##	Functions
+##	Usefull Functions
 ####################################################################################
 
 extract() {
@@ -205,6 +201,15 @@ alias yt-dlp-channel='yt-dlp-best 8 -i --yes-playlist'
 ## 	Sudo completion for common commands
 ####################################################################################
 
-for cmd in pacman sctl reboot poweroff; do
-    complete -F _command "sudo $cmd" 2>/dev/null || true
-done
+# Load systemctl completion
+[[ $(type -t _systemctl) == function ]] || source /usr/share/bash-completion/completions/systemctl 2>/dev/null
+
+# Fix all alias completions
+complete -F _pacman    pacman
+complete -F _systemctl sctl
+complete -F _command   reboot
+complete -F _command   poweroff
+complete -F _pacman    "sudo pacman"
+complete -F _systemctl "sudo sctl"
+complete -F _command   "sudo reboot"
+complete -F _command   "sudo poweroff"
