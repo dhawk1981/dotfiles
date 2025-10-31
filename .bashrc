@@ -37,7 +37,7 @@ if [ -f /etc/bashrc ]; then
 	. /etc/bashrc
 fi
 
-# Your exact working MANPAGER — preserved and respected
+# Color Man Pages
 export MANPAGER="sh -c 'sed -u -e \"s/\\x1B\[[0-9;]*m//g; s/.\\x08//g\" | bat -p -lman'"
 
 ####################################################################################
@@ -98,8 +98,12 @@ alias v="nvim"
 alias reboot='sudo reboot'
 alias poweroff='sudo poweroff'
 alias sctl='sudo systemctl'
+# Load systemctl completions if not already loaded
+[[ $(type -t _systemctl) == function ]] || source /usr/share/bash-completion/completions/systemctl 2>/dev/null
 
-# cd shortcuts
+# Attach to sctl (and any other sudo aliases)
+complete -F _systemctl sctl
+# cd shortcuts 
 alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
@@ -201,6 +205,6 @@ alias yt-dlp-channel='yt-dlp-best 8 -i --yes-playlist'
 ## 	Sudo completion for common commands
 ####################################################################################
 
-for cmd in pacman systemctl reboot poweroff; do
+for cmd in pacman sctl reboot poweroff; do
     complete -F _command "sudo $cmd" 2>/dev/null || true
 done
