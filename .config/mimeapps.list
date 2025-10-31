@@ -30,3 +30,4 @@ application/x-extension-xhtml=firefox.desktop;
 application/x-extension-xht=firefox.desktop;
 application/x-zerosize=nvim.desktop;
 application/x-trash=nvim.desktop;
+application/vnd.ms-publisher=nvim.desktop;

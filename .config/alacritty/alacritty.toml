@@ -1,0 +1,15 @@
+[general]
+
+# Import theme
+import  = ["themes/themes/dracula.toml"]
+
+
+[window]
+opacity = 0.9
+blur = true
+padding = {x = 8, y = 8}
+dynamic_padding = true
+
+[font]
+normal = {family = "JetBrainsMono Nerd Font"}
+# normal = {family = "FontAwesome"}
