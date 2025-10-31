@@ -28,6 +28,8 @@ export HISTSIZE=-1
 export HISTFILESIZE=-1
 export HISTCONTROL=ignoredups:ignorespace:erasedups
 PROMPT_COMMAND='history -a; history -c; history -r'
+# Color Man Pages
+export MANPAGER="sh -c 'sed -u -e \"s/\\x1B\[[0-9;]*m//g; s/.\\x08//g\" | bat -p -lman'"
 
 ####################################################################################
 ##	Globals
@@ -36,9 +38,6 @@ PROMPT_COMMAND='history -a; history -c; history -r'
 if [ -f /etc/bashrc ]; then
 	. /etc/bashrc
 fi
-
-# Color Man Pages
-export MANPAGER="sh -c 'sed -u -e \"s/\\x1B\[[0-9;]*m//g; s/.\\x08//g\" | bat -p -lman'"
 
 ####################################################################################
 ##	Path
