@@ -1,0 +1,16 @@
+[Unit]
+Description=Add SSH key to agent
+After=ssh-agent.service
+Requisite=ssh-agent.service
+
+[Service]
+Type=oneshot
+# Source the agent environment, then add key
+ExecStart=/bin/sh -c 'source /usr/lib/systemd/user/ssh-agent.service > /dev/null 2>&1; exec /usr/bin/ssh-add %h/.ssh/dhawk1981'
+# Fallback: if above fails, try direct socket
+Environment=SSH_AUTH_SOCK=%t/ssh-agent.socket
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=default.target

@@ -65,12 +65,14 @@ unset rc
 ####################################################################################
 ##  Prompt – clean base + FAST, SAFE git branch
 ####################################################################################
+
 PS1='\[\033[36m\]\u\[\033[m\]@\[\033[32m\]\h:\[\033[33;1m\]\w\[\033[35m\]$( \
     git rev-parse --is-inside-work-tree >/dev/null 2>&1 && \
     ( git symbolic-ref --quiet --short HEAD 2>/dev/null || \
       git rev-parse --short HEAD 2>/dev/null ) | \
     sed "s/^/ (/; s/$/)/" \
 )\[\033[m\]\$ '
+
 ####################################################################################
 ##	Alias
 ####################################################################################
@@ -95,7 +97,7 @@ alias vi="nvim"
 alias v="nvim"
 alias reboot='sudo reboot'
 alias poweroff='sudo poweroff'
-alias systemctl='sudo systemctl'
+alias sctl='sudo systemctl'
 
 # cd shortcuts
 alias ..='cd ..'
